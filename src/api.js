@@ -191,7 +191,7 @@ export const getMyEntities = async () => {
   const [from] = await web3.eth.getAccounts();
   if (!from) return [];
 
-  return [getEntityInfoForAddress(from), ...(await getEntities(from))];
+  return [getEntityInfoForAddress(from)];
 };
 
 export const getEntities = async (from) =>
