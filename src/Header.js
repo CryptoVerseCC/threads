@@ -11,9 +11,7 @@ import NoIdentity from './img/noidentity.svg';
 import notificationsIcon from './img/notifications.svg';
 import Context from './Context';
 import Logo from './Logo';
-import Dropdown from './Dropdown';
 import { niceScroll } from './cssUtils';
-import { SidebarToggler } from './Sidebar';
 
 const StyledHeader = styled.div`
   height: 60px;
@@ -66,11 +64,9 @@ const Header = () => {
     <HeaderContainer>
       <NetworkWarning />
       <StyledHeader>
-        <SidebarToggler />
         <Link to="/">
           <Logo />
         </Link>
-        <LinkDropdown />
         <LinkContainer>
           <TitleLink to="/">
             Tok
@@ -78,7 +74,6 @@ const Header = () => {
             talk
           </TitleLink>
           <CrossLink to="/about">About</CrossLink>
-          <CrossLink to="/clubs">Explore clubs</CrossLink>
         </LinkContainer>
         <IfActiveEntity then={() => <AvatarSwitcher />} other={<Status />} />
       </StyledHeader>
@@ -236,60 +231,9 @@ const AvatarSwitcher = () => {
       <NotificationsLink to="/notifications">
         <Notifications alt="" src={notificationsIcon} />
       </NotificationsLink>
-      <Dropdown
-        Content={AvatarSwitcherContent}
-        toggle={({ openDropdown }) => <AvatarSwitcherToggle openDropdown={openDropdown} />}
-        position="right"
-      >
-        {({ closeDropdown }) => (
-          <Entities>
-            {({ entities, changeActiveEntityTo }) =>
-              entities.map((entity) => {
-                const { id, ...entityInfo } = entity;
-                return (
-                  <li className="dropdown-item" style={{ padding: '0', minWidth: '15rem' }} key={entity.id}>
-                    <PickEntity
-                      onClick={() => {
-                        changeActiveEntityTo(entity);
-                        closeDropdown();
-                      }}
-                    >
-                      <Avatar id={id} entityInfo={entityInfo} size="small" lazy={false} />
-                      <b style={{ marginLeft: '5px', fontSize: '0.9rem' }}>{entity.name}</b>
-                    </PickEntity>
-                  </li>
-                );
-              })
-            }
-          </Entities>
-        )}
-      </Dropdown>
     </div>
   );
 };
-
-const DropdownLink = styled(CrossLink)`
-  padding: 3px;
-  margin: 0;
-  color: #264dd9;
-  font-weight: 600;
-`;
-
-const LinkDropdownContainer = styled.div`
-  margin-left: 5px;
-  display: none;
-  @media (max-width: 770px) {
-    display: flex;
-  }
-`;
-
-const LinkDropdown = () => (
-  <LinkDropdownContainer>
-    <React.Fragment>
-      <DropdownLink to="/clubs">Clubs</DropdownLink>
-    </React.Fragment>
-  </LinkDropdownContainer>
-);
 
 const Error = styled.span`
   color: #fc0035;

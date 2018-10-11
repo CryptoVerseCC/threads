@@ -337,9 +337,9 @@ export const getSupportings = async (token, asset) => {
   }
 };
 
-export const getWeb3State = async (storage) => {
+export const getWeb3State = async () => {
   try {
-    const web3 = await getWeb3(storage);
+    const web3 = await getWeb3();
     const [[from], isListening, networkId, blockNumber] = await Promise.all([
       web3.eth.getAccounts(),
       web3.eth.net.isListening(),

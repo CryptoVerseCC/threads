@@ -6,7 +6,6 @@ import AppContext from './Context';
 import { SwitcherIcon, ExclamationMark } from './Icons';
 import unlockBackground from './img/unlock_bg.png';
 import mouse from './img/mouse_click.png';
-import OpenSea from './OpenSea';
 
 const Web3Locked = () => (
   <Web3LockedContainer>
@@ -60,14 +59,6 @@ const NoToken = ({ token }) => (
         </p>
       </div>
     </StatusHeader>
-    {token.is721 ? (
-      <AppContext>
-        {({ web3Store }) =>
-          web3Store.networkName === 'ethereum' &&
-          web3Store.from && <OpenSea token={token} style={{ marginTop: '15px' }} />
-        }
-      </AppContext>
-    ) : null}
   </WarningContainerColored>
 );
 

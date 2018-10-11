@@ -127,7 +127,7 @@ export default class App extends Component {
   };
 
   refreshWeb3State = async () => {
-    const { from, isListening, provider, networkName } = await getWeb3State(this.storage);
+    const { from, isListening, provider, networkName } = await getWeb3State();
     if (this.state.from !== from) this.refreshMyEntities();
     this.setState({ from, isListening, provider, networkName });
   };
@@ -419,70 +419,45 @@ export default class App extends Component {
   }
 
   static ShowPage = (props) => (
-    <SidebarProvider overlay>
+    <React.Fragment>
       <Header />
-      <SidebarContainer>
-        <SidebarLeft />
-        <SidebarRight>
-          <Context.Consumer>
-            {({ feedStore, entityStore }) => (
-              <ShowPage
-                {...props}
-                getFeedItems={feedStore.getFeedItems}
-                getNewFeedItems={feedStore.getNewFeedItems}
-                getEntityInfo={entityStore.getEntityInfo}
-              />
-            )}
-          </Context.Consumer>
-        </SidebarRight>
-      </SidebarContainer>
-    </SidebarProvider>
-  );
-
-  static Discover = (props) => (
-    <SidebarProvider overlay>
-      <Header />
-      <SidebarContainer>
-        <SidebarLeft />
-        <SidebarRight>
-          <Discover {...props} />
-        </SidebarRight>
-      </SidebarContainer>
-    </SidebarProvider>
+      <Context.Consumer>
+        {({ feedStore, entityStore }) => (
+          <ShowPage
+            {...props}
+            getFeedItems={feedStore.getFeedItems}
+            getNewFeedItems={feedStore.getNewFeedItems}
+            getEntityInfo={entityStore.getEntityInfo}
+          />
+        )}
+      </Context.Consumer>
+    </React.Fragment>
   );
 
   static Index = (props) => (
-    <SidebarProvider>
+    <React.Fragment>
       <Header />
-      <SidebarContainer>
-        <SidebarLeft />
-        <SidebarRight>
-          <Context.Consumer>
-            {({ feedStore }) => (
-              <div>
-                {props.location.pathname === '/' && <IndexPage {...props} />}
-                {props.location.pathname === '/personal' && <PersonalPage {...props} />}
-                {props.location.pathname === '/notifications' && <Notifications {...props} />}
-              </div>
-            )}
-          </Context.Consumer>
-        </SidebarRight>
-      </SidebarContainer>
-    </SidebarProvider>
+
+      <Context.Consumer>
+        {({ feedStore }) => (
+          <div>
+            {props.location.pathname === '/' && <IndexPage {...props} />}
+            {props.location.pathname === '/personal' && <PersonalPage {...props} />}
+            {props.location.pathname === '/notifications' && <Notifications {...props} />}
+          </div>
+        )}
+      </Context.Consumer>
+    </React.Fragment>
   );
 
   static Thread = (props) => (
-    <SidebarProvider>
+    <React.Fragment>
       <Header />
-      <SidebarContainer>
-        <SidebarLeft />
-        <SidebarRight>
-          <Context.Consumer>
-            {({ feedStore }) => <Thread {...props} getFeedItem={feedStore.getFeedItem} />}
-          </Context.Consumer>
-        </SidebarRight>
-      </SidebarContainer>
-    </SidebarProvider>
+
+      <Context.Consumer>
+        {({ feedStore }) => <Thread {...props} getFeedItem={feedStore.getFeedItem} />}
+      </Context.Consumer>
+    </React.Fragment>
   );
 
   static ModalThread = (props) => (

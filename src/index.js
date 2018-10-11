@@ -10,26 +10,12 @@ import Communities from './Communities';
 import Threads from './Threads';
 import NotFound from './NotFound';
 import FAQ from './FAQPage';
-import { Storage, ScrollTop, rewriteCmp, validateParams } from './utils';
+import { Storage, ScrollTop, validateParams } from './utils';
 import { runInContext, Sentry } from './Sentry';
 
 import registerServiceWorker from './registerServiceWorker';
-import { ChangellyFastBuy } from './Changelly';
-import { CoinbaseWidget } from './CoinbaseWidget';
 
-const runMigrations = (storage) => {
-  let version = parseInt(storage.getItem('version'), 10);
-  if (isNaN(version)) {
-    storage.setItem('entityInfo', '');
-    storage.setItem('version', 1);
-    version = 1;
-  }
-
-  if (version === 1) {
-    storage.removeItem('entityInfo');
-    storage.setItem('version', 2);
-  }
-};
+const runMigrations = (storage) => {};
 
 const storage = Storage();
 runMigrations(storage);
@@ -82,18 +68,7 @@ const TokNTalk = withRouter(
             <Route exact path="/threads" component={Threads} />
             <Route exact path="/faq" component={FAQ} />
             <Route exact path="/404" component={NotFound} />
-            <Route exact path="/how-to-get-tokens" component={Widgets} />
-
             <Route exact path="/" component={App.Index} />
-            <Route exact path="/personal" component={App.Index} />
-            <Route exact path="/notifications" component={App.Index} />
-            <Route path="/clubs" component={App.Discover} />
-            <Route path="/discover" component={rewriteCmp('/discover', '/clubs')} />
-            <Route
-              sensitive
-              path="/:slug1*:slug2([A-Z]):slug3*/"
-              render={(props) => <Redirect to={`${props.location.pathname.toLowerCase()}`} />}
-            />
             <Route exact path="/:entityId" component={validateEntityId(App.ShowPage)} />
             {!isModal ? <Route exact path="/thread/:claimId" component={App.Thread} /> : null}
           </Switch>
@@ -103,15 +78,6 @@ const TokNTalk = withRouter(
     }
   },
 );
-
-const Widgets = () => {
-  return (
-    <div>
-      <ChangellyFastBuy />
-      <CoinbaseWidget />
-    </div>
-  );
-};
 
 const startApp = () => {
   ReactDOM.render(

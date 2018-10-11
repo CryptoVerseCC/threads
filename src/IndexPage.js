@@ -2,15 +2,12 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 import { getFeedItemsFromCache, getRanking, isValidFeedItem, enhanceFeedItem } from './api';
-import AppContext from './Context';
 import { pageView } from './Analytics';
 import { getFeed } from './Feed';
 import Hero from './Hero';
-import { PromotionBox } from './promotion/PromotionBox';
 import { FlatContainer } from './Components';
 import FeedTypeSwitcher from './FeedTypeSwitcher';
 import StatusBox from './StatusBox';
-import Announcement from './Announcements';
 
 const ExplainerBox = styled(FlatContainer)`
   margin-top: 20px;
@@ -57,8 +54,7 @@ export default class IndexPage extends Component {
     return (
       <React.Fragment>
         <div className="columns ordered-mobile">
-          <div className="column is-9 fl-1">
-            <Announcement />
+          <div className="column is-8 fl-1 is-offset-2">
             <StatusBox check={StatusBox.Web3LockedCheck} style={{ marginBottom: '30px' }}>
               <Hero />
             </StatusBox>
@@ -71,24 +67,6 @@ export default class IndexPage extends Component {
             {feedType === FeedTypeSwitcher.NEW && <NewestFeed />}
             {feedType === FeedTypeSwitcher.POPULAR && <PopularFeed />}
             {feedType === FeedTypeSwitcher.ACTIVE && <ActiveFeed />}
-          </div>
-          <div className="column is-3 is-hidden-mobile">
-            <FlatContainer>
-              <AppContext.Consumer>
-                {({ boostStore: { getBoosts, getSupportings } }) => (
-                  <PromotionBox
-                    getBoosts={getBoosts}
-                    getSupportings={getSupportings}
-                    token={DEFAULT_TOKEN_ID}
-                    showPurrmoter={true}
-                  />
-                )}
-              </AppContext.Consumer>
-            </FlatContainer>
-            <ExplainerBox>
-              This feed represents all messages posted on Tok'n'talk. Use it to discover new valuable communities and
-              interesting characters.
-            </ExplainerBox>
           </div>
         </div>
       </React.Fragment>
