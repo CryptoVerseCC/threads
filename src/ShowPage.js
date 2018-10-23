@@ -20,7 +20,6 @@ import { CommentForm, ConnectedWriteToForm, ConnectedCommentForm } from './Comme
 import Link from './Link';
 import { findClub } from './clubs';
 import { TokenImage } from './clubs';
-import { PromotionBox } from './promotion/PromotionBox';
 import { FlatContainer, H3, H4, SocialUsername, CopyButton } from './Components';
 import checkMark from './img/checkmark.svg';
 import closeIcon from './img/small-remove.svg';
@@ -108,7 +107,7 @@ export default class ShowPage extends Component {
   `;
 
   render() {
-    const { EntityInfo, Cousins, Communities, FeedContainer, ExternalLinks } = this;
+    const { EntityInfo, Cousins, Communities, FeedContainer } = this;
     const { entityId } = this.props.match.params;
     const tokenClub = this.getCommunityToken(entityId);
 
@@ -136,7 +135,6 @@ export default class ShowPage extends Component {
                   primaryColor={entity.background_color ? `#${entity.background_color}` : tokenClub.primaryColor}
                 >
                   <EntityInfo entity={entity} />
-                  <ExternalLinks entity={entity} />
                 </ProfileBox>
               </div>
               <div className="column is-6 fl-1">
@@ -163,27 +161,6 @@ export default class ShowPage extends Component {
         {({ web3Store }) => web3Store.networkName === 'ethereum' && entity.isAddress && <SendTokens to={entity} />}
       </AppContext>
     </React.Fragment>
-  );
-
-  ExternalLinks = ({ entity }) => (
-    <React.Fragment>
-      <H4 style={{ marginTop: '20px', marginBottom: '10px' }}>Personal links:</H4>
-      <IfIsOwnedByCurrentUser
-        entity={entity}
-        then={<SocialList editable {...entity} />}
-        other={<SocialList {...entity} />}
-      />
-    </React.Fragment>
-  );
-
-  PromotionBox = ({ entity }) => (
-    <FlatContainer style={{ marginTop: '20px' }}>
-      <AppContext.Consumer>
-        {({ boostStore: { getBoosts, getSupportings } }) => (
-          <PromotionBox getBoosts={getBoosts} getSupportings={getSupportings} token={entity.id} showPurrmoter={false} />
-        )}
-      </AppContext.Consumer>
-    </FlatContainer>
   );
 
   Cousins = ({ entity, style }) => (

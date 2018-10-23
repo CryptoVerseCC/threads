@@ -609,6 +609,21 @@ export const label = async (entity, message, labelType, { http } = {}) => {
   };
 };
 
+export const postThread = async (entity, thread, { http }) => {
+  const data = {
+    type: ['post'],
+    claim: thread,
+    credits: getCreditsData(),
+  };
+  const id = await sendClaim(data, http);
+  const feedItemBase = await createFeedItemBase(id, entity, http);
+
+  return {
+    ...feedItemBase,
+    type: 'post',
+  };
+};
+
 export const boost = async (who, whom, value, asset) => {
   const { networkName } = await getWeb3State();
   let ownerAddress;

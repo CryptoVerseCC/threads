@@ -20,24 +20,18 @@ import {
   label,
   writeTo,
   writeAbout,
-  boost,
   getLabels,
   getEntityTokens,
-  getBoosts,
-  getSupportings,
   getFeedItem,
+  postThread,
 } from './api';
 import { getEntityData } from './entityApi';
 import Header from './Header';
 import { Thread, ModalThread } from './Thread';
-import Discover from './Discover';
 import { Storage, getEntityInfoForAddress } from './utils';
 import { UnreadedMessagesProvider } from './UnreadedMessages';
 import WalletModal from './WalletModal';
 import { metamaskStatusChanged } from './Analytics';
-import { SidebarProvider, SidebarContainer, SidebarLeft, SidebarRight } from './Sidebar';
-
-const { REACT_APP_INTERFACE_BOOST_NETWORK: INTERFACE_BOOST_NETWORK } = process.env;
 
 export const produceEntities = (myEntities, previousActiveEntity) => {
   const firstEntity = myEntities[0];
@@ -68,8 +62,6 @@ export default class App extends Component {
     temporaryFeedItems: [],
     temporaryReplies: {},
     temporaryReactions: {},
-    boosts: {},
-    supportings: {},
     from: undefined,
     provider: undefined,
     waitingForConfirm: 0,
@@ -177,13 +169,13 @@ export default class App extends Component {
     if (!entityInfo) entityInfo = await this.getEntityInfo(entityId);
     let entityLabels = this.state.entityLabels[entityId];
     if (!entityLabels) entityLabels = await this.getEntityLabels(entityId);
-    let entityTokens = this.state.entityTokens[entityId];
-    if (!entityTokens) entityTokens = await this.getEntityTokens(entityId);
+    // let entityTokens = this.state.entityTokens[entityId];
+    // if (!entityTokens) entityTokens = await this.getEntityTokens(entityId);
 
     const newState = update(this.state, {
       entityInfo: { [entityId]: { $set: entityInfo } },
       entityLabels: { [entityId]: { $set: entityLabels } },
-      entityTokens: { [entityId]: { $set: entityTokens } },
+      // entityTokens: { [entityId]: { $set: entityTokens } },
     });
 
     this.setState(newState, this.saveEntities);
@@ -194,34 +186,14 @@ export default class App extends Component {
     let entityInfo = this.state.entityInfo[entityId];
     let entityLabels = this.state.entityLabels[entityId];
     let entityTokens = this.state.entityTokens[entityId];
-    const boost = this.state.boosts[entityId] || { score: 0 };
-    const boostValue = boost.score;
+
     return {
       id: entityId,
-      boostValue,
       tokens: entityTokens || [],
       ...entityInfo,
       ...entityLabels,
     };
   };
-
-  getBoosts = async (tokenId, asset) => {
-    const boosts = await getBoosts(tokenId, asset);
-    // if (this.state.feedId === tokenId || (this.state.feedId === undefined && tokenId === DEFAULT_TOKEN_ID)) {
-    this.setState({ boosts });
-    // }
-  };
-
-  getSupportings = async (tokenId, asset) => {
-    const supportings = await getSupportings(tokenId, asset);
-    // if (this.state.feedId === tokenId || (this.state.feedId === undefined && tokenId === DEFAULT_TOKEN_ID)) {
-    this.setState({ supportings });
-    // }
-  };
-
-  get isBoostable() {
-    return this.state.from && this.state.networkName === INTERFACE_BOOST_NETWORK;
-  }
 
   addWaitingConfirmation = () =>
     this.setState(({ waitingForConfirm }) => ({
@@ -238,6 +210,16 @@ export default class App extends Component {
       this.setState({
         temporaryFeedItems: [temporaryFeedItem, ...this.state.temporaryFeedItems],
       });
+    } catch (e) {}
+    this.removeConfirmation();
+  };
+
+  postThread = async (message) => {
+    this.addWaitingConfirmation();
+    const { http, activeEntity } = this.state;
+    try {
+      const temporaryThread = await postThread(activeEntity, message, { http });
+      console.log('temporaryThread', temporaryThread);
     } catch (e) {}
     this.removeConfirmation();
   };
@@ -294,21 +276,6 @@ export default class App extends Component {
     this.removeConfirmation();
   };
 
-  label = async (message, labelType) => {
-    this.addWaitingConfirmation();
-    const { http, activeEntity } = this.state;
-    try {
-      const temporaryFeedItem = await label(activeEntity, message, labelType, { http });
-      this.setState(
-        produce((draft) => {
-          draft.entityLabels[activeEntity.id][labelType] = temporaryFeedItem.target;
-          draft.temporaryFeedItems = [temporaryFeedItem, ...draft.temporaryFeedItems];
-        }),
-      );
-    } catch (e) {}
-    this.removeConfirmation();
-  };
-
   getFeedItem = async (claimId) => {
     const { feedItems } = this.state;
     try {
@@ -322,12 +289,6 @@ export default class App extends Component {
     }
   };
 
-  exportWallet = () => {
-    const mnemonic = this.storage.getItem('mnemonic');
-    const privateKey = this.storage.getItem('privateKey');
-    return { privateKey, mnemonic };
-  };
-
   render() {
     const {
       changeActiveEntityTo,
@@ -337,14 +298,11 @@ export default class App extends Component {
       writeTo,
       writeAbout,
       react,
+      postThread,
       label,
       getEntity,
       getFeedItem,
-      isBoostable,
-      getBoosts,
-      getSupportings,
       toggleHttpClaims,
-      exportWallet,
     } = this;
     const {
       activeEntity,
@@ -359,8 +317,6 @@ export default class App extends Component {
       provider,
       from,
       networkName,
-      boosts,
-      supportings,
       http,
       waitingForConfirm,
     } = this.state;
@@ -387,6 +343,7 @@ export default class App extends Component {
             writeAbout,
             react,
             label,
+            postThread,
             feedItem,
             feedItemLoading,
             getFeedItem,
@@ -395,20 +352,11 @@ export default class App extends Component {
             temporaryReactions,
             allowAddingFeedItem,
           },
-          boostStore: {
-            boost,
-            boosts,
-            isBoostable,
-            getBoosts,
-            supportings,
-            getSupportings,
-          },
           web3Store: {
             provider,
             from,
             networkName,
             waitingForConfirm,
-            exportWallet,
           },
         }}
       >
@@ -437,16 +385,7 @@ export default class App extends Component {
   static Index = (props) => (
     <React.Fragment>
       <Header />
-
-      <Context.Consumer>
-        {({ feedStore }) => (
-          <div>
-            {props.location.pathname === '/' && <IndexPage {...props} />}
-            {props.location.pathname === '/personal' && <PersonalPage {...props} />}
-            {props.location.pathname === '/notifications' && <Notifications {...props} />}
-          </div>
-        )}
-      </Context.Consumer>
+      <IndexPage {...props} />
     </React.Fragment>
   );
 

@@ -1,29 +1,21 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 
-import { getFeedItemsFromCache, getRanking, isValidFeedItem, enhanceFeedItem } from './api';
+import { getRanking, isValidFeedItem, enhanceFeedItem } from './api';
 import { pageView } from './Analytics';
 import { getFeed } from './Feed';
-import Hero from './Hero';
-import { FlatContainer } from './Components';
 import FeedTypeSwitcher from './FeedTypeSwitcher';
 import StatusBox from './StatusBox';
+import { AddThread } from './AddThread';
+import { withActiveEntity } from './Entity';
+import AppContext from './Context';
 
-const ExplainerBox = styled(FlatContainer)`
-  margin-top: 20px;
+const EnhancedAddThread = withActiveEntity(AddThread);
 
-  @media (max-width: 770px) {
-    mergin-top: 10px;
-  }
-`;
-
-const { REACT_APP_DEFAULT_TOKEN_ID: DEFAULT_TOKEN_ID } = process.env;
-
-const fetchPopularFeed = async () => {
+const fetchThreads = async () => {
   const { items } = await getRanking(
     [
       {
-        algorithm: 'cryptoverse_last_week_popular_feed',
+        algorithm: 'cryptoverse_threads_feed_active',
       },
     ],
     'api/decorate-with-opensea',
@@ -31,9 +23,7 @@ const fetchPopularFeed = async () => {
   return items.filter(isValidFeedItem).map(enhanceFeedItem);
 };
 
-const NewestFeed = getFeed(getFeedItemsFromCache(), true, true, undefined, (f0, f1) => f1.created_at - f0.created_at);
-const PopularFeed = getFeed(fetchPopularFeed, false, false);
-const ActiveFeed = getFeed(getFeedItemsFromCache('cache-cryptoverse-active-feed'), true, false);
+const ActiveFeed = getFeed(fetchThreads, false, false);
 
 export default class IndexPage extends Component {
   state = { feedType: FeedTypeSwitcher.ACTIVE };
@@ -49,26 +39,23 @@ export default class IndexPage extends Component {
   };
 
   render() {
-    const { feedType } = this.state;
-    const defaultUnloggedFeeds = [FeedTypeSwitcher.ACTIVE, FeedTypeSwitcher.POPULAR, FeedTypeSwitcher.NEW];
     return (
       <React.Fragment>
-        <div className="columns ordered-mobile">
-          <div className="column is-8 fl-1 is-offset-2">
-            <StatusBox check={StatusBox.Web3LockedCheck} style={{ marginBottom: '30px' }}>
-              <Hero />
-            </StatusBox>
-            <FeedTypeSwitcher
-              type={feedType}
-              onChange={this.changeFeedType}
-              style={{ marginBottom: '2em' }}
-              options={defaultUnloggedFeeds}
-            />
-            {feedType === FeedTypeSwitcher.NEW && <NewestFeed />}
-            {feedType === FeedTypeSwitcher.POPULAR && <PopularFeed />}
-            {feedType === FeedTypeSwitcher.ACTIVE && <ActiveFeed />}
-          </div>
-        </div>
+        <AppContext.Consumer>
+          {({ feedStore: { postThread } }) => (
+            <div className="columns ordered-mobile">
+              <div className="column is-8 fl-1 is-offset-2">
+                <StatusBox check={StatusBox.Web3LockedCheck} style={{ marginBottom: '30px' }}>
+                  <EnhancedAddThread
+                    onCreate={({ title, description }) => postThread({ target: title, content: description })}
+                    style={{ marginTop: '30px' }}
+                  />
+                </StatusBox>
+                <ActiveFeed />
+              </div>
+            </div>
+          )}
+        </AppContext.Consumer>
       </React.Fragment>
     );
   }
