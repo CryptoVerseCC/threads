@@ -2,6 +2,18 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { Link as RawLink } from 'react-router-dom';
 
+export const UnstyledLink = styled(RawLink)`
+  text-decoration: unset;
+
+  &:focus,
+  &:hover,
+  &:visited,
+  &:link,
+  &:active {
+    text-decoration: unset;
+  }
+`;
+
 export const defaultLinkCss = css`
   color: #264dd9;
   font-weight: 600;

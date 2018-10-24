@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 
-import { FixedModal } from './Modal';
-import Card from './feed/Card';
+import { Thread as ThreadCmp } from './feed/Thread';
 import LikersModal from './LikersModal';
 import { VerifyModal } from './VerifyModal';
 import Loader from './Loader';
 import Context from './Context';
 
-class ThreadCmp extends Component {
+export class Thread extends Component {
   state = {
     showModal: false,
     feedItemLikes: [],
@@ -32,71 +30,67 @@ class ThreadCmp extends Component {
     const { showModal, feedItemLikes, showVerify, verifiableItem } = this.state;
 
     return (
-      <React.Fragment>
-        <Context.Consumer>
-          {({ feedStore: { feedItemLoading, feedItem, temporaryReactions } }) => {
-            const getTemporaryReactions = (id) => temporaryReactions[id] || [];
+      <div className="columns">
+        <div className="column is-8 fl-1 is-offset-2">
+          <Context.Consumer>
+            {({ feedStore: { feedItemLoading, feedItem, temporaryReactions } }) => {
+              const getTemporaryReactions = (id) => temporaryReactions[id] || [];
 
-            return !!feedItem || (!feedItemLoading && !!feedItem) ? (
-              <Card
-                hidePermalink
-                feedItem={feedItem}
-                replies={feedItem.replies}
-                reactions={feedItem.likes}
-                style={{ marginTop: '10px' }}
-                onShowLikers={this.onShowLikers}
-                getTemporaryReactions={getTemporaryReactions}
-                onVerify={this.onVerify}
-              />
-            ) : (
-              <div
-                style={{
-                  paddingTop: '20px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                }}
-              >
-                <Loader />
-              </div>
-            );
-          }}
-        </Context.Consumer>
-        {showModal && (
-          <LikersModal
-            onClose={() => this.setState({ showModal: false })}
-            likes={feedItemLikes}
-            onVerify={this.onVerify}
-          />
-        )}
-        {showVerify && <VerifyModal onClose={() => this.setState({ showVerify: false })} feedItem={verifiableItem} />}
-      </React.Fragment>
+              return !!feedItem || (!feedItemLoading && !!feedItem) ? (
+                <ThreadCmp
+                  hidePermalink
+                  feedItem={feedItem}
+                  replies={feedItem.replies}
+                  reactions={feedItem.likes}
+                  style={{ marginTop: '10px' }}
+                  onShowLikers={this.onShowLikers}
+                  getTemporaryReactions={getTemporaryReactions}
+                  onVerify={this.onVerify}
+                />
+              ) : (
+                <div
+                  style={{
+                    paddingTop: '20px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Loader />
+                </div>
+              );
+            }}
+          </Context.Consumer>
+          {showModal && (
+            <LikersModal
+              onClose={() => this.setState({ showModal: false })}
+              likes={feedItemLikes}
+              onVerify={this.onVerify}
+            />
+          )}
+          {showVerify && <VerifyModal onClose={() => this.setState({ showVerify: false })} feedItem={verifiableItem} />}
+        </div>
+      </div>
     );
   }
 }
 
-export const Thread = (props) => (
-  <React.Fragment>
-    <ThreadCmp {...props} />
-  </React.Fragment>
-);
+// const ModalContainer = styled.div`
+//   max-height: 90vh;
+//   overflow-y: scroll;
+// `;
 
-const ModalContainer = styled.div`
-  max-height: 90vh;
-  overflow-y: scroll;
-`;
+// export class ModalThread extends Component {
+//   onClose = () => {
+//     this.props.history.goBack();
+//   };
 
-export class ModalThread extends Component {
-  onClose = () => {
-    this.props.history.goBack();
-  };
-
-  render() {
-    return (
-      <FixedModal onClose={this.onClose}>
-        <ModalContainer>
-          <ThreadCmp {...this.props} />
-        </ModalContainer>
-      </FixedModal>
-    );
-  }
-}
+//   render() {
+//     return (
+//       <FixedModal onClose={this.onClose}>
+//         <ModalContainer>
+//           <ThreadCmp {...this.props} />
+//         </ModalContainer>
+//       </FixedModal>
+//     );
+//   }
+// }

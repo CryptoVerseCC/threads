@@ -19,7 +19,7 @@ class AddThreadCmp extends Component {
     return (
       <div style={{ width: '100%', ...style }}>
         <H3>Start a thread</H3>
-        <div className="columns" style={{ color: '#868a97', fontSize: '0.8em', marginBottom: '30px' }}>
+        <div className="columns" style={{ color: '#868a97', fontSize: '0.8rem', marginBottom: '30px' }}>
           <div className="column is-4">
             Please provide a title and a description. You can also define the participants.
           </div>
@@ -27,16 +27,18 @@ class AddThreadCmp extends Component {
             Keep receiving 10% of the total ads in the thread.
           </div>
         </div>
-        <div className="columns" style={{ backgroundColor: '#ffffff', borderRadius: '6px' }}>
+        <div className="columns" style={{ backgroundColor: '#ffffff', borderRadius: '3px' }}>
           <div className="column is-2">
             <Pile style={{ marginBottom: '5px' }}>You</Pile>
             <div className="is-flex" style={{ alignItems: 'center' }}>
               <IdentityAvatar
                 id={activeEntity.id}
                 src={activeEntity.image_preview_url}
-                style={{ width: '2em', height: '2em', flexShrink: 0 }}
+                style={{ width: '2rem', height: '2rem', flexShrink: 0 }}
               />
-              <span style={{ fontSize: '0.6em', fontWeight: 'bold' }}>{activeEntity.name}</span>
+              <span style={{ fontSize: '0.6rem', fontWeight: 'bold', wordBreak: 'break-all' }}>
+                {activeEntity.name}
+              </span>
             </div>
           </div>
           <div className="column">
@@ -67,7 +69,7 @@ const AddButtom = styled.button`
   padding: 10px 15px;
   font-weight: 600;
   border: none;
-  border-radius: 6px;
+  border-radius: 3px;
   outline: 0;
   cursor: pointer;
 `;
@@ -98,7 +100,7 @@ const Filters = styled(({ className }) => (
 
 const Pile = styled.div`
   display: inline-block;
-  font-size: 0.6em;
+  font-size: 0.6rem;
   font-weight: bold;
   padding: 5px 10px;
   background-color: #eef0f9;
@@ -114,7 +116,7 @@ const FilterPile = Pile.extend`
 `;
 
 const FieldTitle = styled.p`
-  font-size: 0.6em;
+  font-size: 0.6rem;
   font-weight: bold;
   margin-bottom: 5px;
 `;
@@ -136,7 +138,7 @@ const Field = styled(({ className, title, multiline, ...restProps }) => (
     width: 100%;
     padding: 10px;
     border: none;
-    border-radius: 6px;
+    border-radius: 3px;
     resize: none;
     outline: none;
     box-shadow: inset 0 0.5px 1.5px 0 rgba(3, 41, 182, 0.12);

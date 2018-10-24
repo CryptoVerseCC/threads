@@ -8,8 +8,6 @@ import { isAddress } from 'web3-utils';
 
 import Context from './Context';
 import IndexPage from './IndexPage';
-import PersonalPage from './PersonalPage';
-import Notifications from './Notifications';
 import ShowPage from './ShowPage';
 import {
   getMyEntities,
@@ -27,7 +25,7 @@ import {
 } from './api';
 import { getEntityData } from './entityApi';
 import Header from './Header';
-import { Thread, ModalThread } from './Thread';
+import { Thread } from './Thread';
 import { Storage, getEntityInfoForAddress } from './utils';
 import { UnreadedMessagesProvider } from './UnreadedMessages';
 import WalletModal from './WalletModal';
@@ -392,16 +390,15 @@ export default class App extends Component {
   static Thread = (props) => (
     <React.Fragment>
       <Header />
-
       <Context.Consumer>
         {({ feedStore }) => <Thread {...props} getFeedItem={feedStore.getFeedItem} />}
       </Context.Consumer>
     </React.Fragment>
   );
 
-  static ModalThread = (props) => (
-    <Context.Consumer>
-      {({ feedStore }) => <ModalThread {...props} getFeedItem={feedStore.getFeedItem} />}
-    </Context.Consumer>
-  );
+  // static ModalThread = (props) => (
+  //   <Context.Consumer>
+  //     {({ feedStore }) => <ModalThread {...props} getFeedItem={feedStore.getFeedItem} />}
+  //   </Context.Consumer>
+  // );
 }

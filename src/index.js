@@ -56,13 +56,13 @@ const TokNTalk = withRouter(
         storage.setItem('visited', Date.now());
       }
 
-      const isModal = !!(location.state && location.state.modal && this.previousLocation !== location);
+      // const isModal = !!(location.state && location.state.modal && this.previousLocation !== location);
 
       return (
         <React.Fragment>
           {redirect && <Redirect to="/about" />}
           <ScrollTop />
-          <Switch location={isModal ? this.previousLocation : location}>
+          <Switch location={location}>
             <Route exact path="/about" component={About} />
             <Route exact path="/communities" component={Communities} />
             <Route exact path="/threads" component={Threads} />
@@ -70,9 +70,10 @@ const TokNTalk = withRouter(
             <Route exact path="/404" component={NotFound} />
             <Route exact path="/" component={App.Index} />
             <Route exact path="/:entityId" component={validateEntityId(App.ShowPage)} />
-            {!isModal ? <Route exact path="/thread/:claimId" component={App.Thread} /> : null}
+            {/* {!isModal ? <Route exact path="/thread/:claimId" component={App.Thread} /> : null} */}
+            <Route exact path="/thread/:claimId" component={App.Thread} />
           </Switch>
-          {isModal ? <Route exact path="/thread/:claimId" component={App.ModalThread} /> : null}
+          {/* {isModal ? <Route exact path="/thread/:claimId" component={App.ModalThread} /> : null} */}
         </React.Fragment>
       );
     }

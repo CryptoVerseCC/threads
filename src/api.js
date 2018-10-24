@@ -143,9 +143,7 @@ export const getFeedItem = async ({ claimId }) => {
 
   feedItems = feedItems.filter(isValidFeedItem).map(enhanceFeedItem);
 
-  const item = feedItems[0];
-  item.replies = flattenReplies(item);
-  return item;
+  return feedItems[0];
 };
 
 const flattenReplies = (item) => {

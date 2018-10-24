@@ -130,6 +130,7 @@ export const getFeed = (
   showTemporaryFeedItems,
   getFilterForTemporaryFeedItemsFnk,
   sortFnk,
+  FeedCmp = Feed,
 ) =>
   class extends Component {
     state = {
@@ -265,7 +266,7 @@ export const getFeed = (
             const allFeedItems = uniqBy('id')([...feedItems, ...filteredTemporaryFeedItems]);
 
             return (
-              <Feed
+              <FeedCmp
                 className={className}
                 feedItems={sortFnk ? allFeedItems.sort(sortFnk) : allFeedItems}
                 feedLoading={feedLoading}

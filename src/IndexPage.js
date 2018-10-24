@@ -8,6 +8,7 @@ import StatusBox from './StatusBox';
 import { AddThread } from './AddThread';
 import { withActiveEntity } from './Entity';
 import AppContext from './Context';
+import MainFeed from './feed/MainFeed';
 
 const EnhancedAddThread = withActiveEntity(AddThread);
 
@@ -23,7 +24,7 @@ const fetchThreads = async () => {
   return items.filter(isValidFeedItem).map(enhanceFeedItem);
 };
 
-const ActiveFeed = getFeed(fetchThreads, false, false);
+const ActiveFeed = getFeed(fetchThreads, false, false, undefined, undefined, MainFeed);
 
 export default class IndexPage extends Component {
   state = { feedType: FeedTypeSwitcher.ACTIVE };
@@ -43,8 +44,8 @@ export default class IndexPage extends Component {
       <React.Fragment>
         <AppContext.Consumer>
           {({ feedStore: { postThread } }) => (
-            <div className="columns ordered-mobile">
-              <div className="column is-8 fl-1 is-offset-2">
+            <div className="columns">
+              <div className="column is-8 is-offset-2">
                 <StatusBox check={StatusBox.Web3LockedCheck} style={{ marginBottom: '30px' }}>
                   <EnhancedAddThread
                     onCreate={({ title, description }) => postThread({ target: title, content: description })}
